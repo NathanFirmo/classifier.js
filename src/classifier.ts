@@ -1,15 +1,15 @@
 import { Category } from './category'
 import { sumFunc, toPercent } from './lib'
 
-interface NeuralNetworkOptions {
+interface ClassifierOptions {
   percentualReturn?: boolean
 }
 
-export class NeuralNetwork {
+export class Classifier {
   categories: Category[] = []
-  options?: NeuralNetworkOptions = {}
+  options?: ClassifierOptions = {}
 
-  constructor(options?: NeuralNetworkOptions) {
+  constructor(options?: ClassifierOptions) {
     this.options = options
   }
 

@@ -1,5 +1,6 @@
 import { TokensList } from './tokensList'
 const { isArray } = Array
+import { getAbsoluteValue, sumFunc } from './lib'
 
 export class Category {
   name: string
@@ -22,7 +23,7 @@ export class Category {
     return this
   }
 
-  normalizeData(sentence: string) {
+  private normalizeData(sentence: string) {
     return sentence.toLowerCase()
   }
 
@@ -30,17 +31,38 @@ export class Category {
     return isArray(input) ? input.join(' ').split(' ') : input.split(' ')
   }
 
-  analize() {
-    this.getWords(this.sentences).forEach((word) =>
-      this.inferedTokens.addKeyword(word)
-    )
+  analize(categories: Category[]) {
+    this.getWords(this.sentences).forEach((word) => {
+      this.inferedTokens.strengthenKeyword(word)
+    })
+
+    categories
+      .filter((category) => category.name !== this.name)
+      .forEach((category) =>
+        category
+          .getWords(category.sentences)
+          .forEach((word) => this.inferedTokens.weakenKeyword(word))
+      )
+
     return this
   }
 
-  classify(sentence: string) {
-    this.analize()
-    return this.getWords(this.normalizeData(sentence))
-      .map((word) => this.inferedTokens.test(word))
-      .reduce((a, b) => a + b, 0)
+  private resolveScore(score: number[]) {
+    const positiveValues = score.filter((item) => item >= 0)
+    const negativeValues = score.filter((item) => item < 0)
+    const sumOfPositiveValues = positiveValues.reduce(sumFunc, 0)
+    const resolvedNegativeScore = getAbsoluteValue(
+      negativeValues.reduce(sumFunc, 0)
+    )
+    return sumOfPositiveValues / (resolvedNegativeScore + sumOfPositiveValues)
+  }
+
+  classify(sentence: string, categories: Category[]) {
+    this.analize(categories)
+    const classifiedWords = this.getWords(this.normalizeData(sentence)).map(
+      (word) => this.inferedTokens.test(word)
+    )
+    const score = this.resolveScore(classifiedWords)
+    return score > 0 ? score : 0
   }
 }

@@ -1,5 +1,5 @@
 import { Category } from './category'
-import { toPercent } from './lib'
+import { sumFunc, toPercent } from './lib'
 
 interface NeuralNetworkOptions {
   percentualReturn?: boolean
@@ -26,13 +26,34 @@ export class NeuralNetwork {
     })
   }
 
+  private normalizeData(sentence: string) {
+    return sentence.toLowerCase()
+  }
+
+  private getUnknownScore(sentence: string) {
+    return (
+      this.normalizeData(sentence)
+        .split(' ')
+        .filter((word) => !this.getTokens().includes(word)).length /
+      sentence.split(' ').length
+    )
+  }
+
   classify(sentence: string) {
     let classification: Record<string, number> = {}
     this.categories.forEach((category) => {
-      classification[category.name] = category.classify(sentence)
+      classification[category.name] = category.classify(
+        sentence,
+        this.categories
+      )
     })
-    const sumStrength = Object.values(classification).reduce((a, b) => a + b, 0)
     let result: Record<string, string | number> = {}
+    result.unknown = this.getUnknownScore(sentence)
+    const sumStrength =
+      Object.values(classification).reduce(sumFunc, 0) + result.unknown
+    result.unknown = this.options?.percentualReturn
+      ? toPercent(result.unknown / sumStrength)
+      : result.unknown / sumStrength
     for (const [name, strength] of Object.entries(classification)) {
       const value = sumStrength ? strength / sumStrength : 0
       result[name] = this.options?.percentualReturn ? toPercent(value) : value
@@ -40,4 +61,13 @@ export class NeuralNetwork {
     return result
   }
 
+  getTokens() {
+    return this.categories.flatMap((category) =>
+      category.getWords(category.sentences)
+    )
+  }
+
+  getCateforieByName(name: string) {
+    return this.categories.find((category) => category.name === name)
+  }
 }

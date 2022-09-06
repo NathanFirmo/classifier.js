@@ -11,20 +11,29 @@ export class TokensList {
     this.category = category
   }
 
-  addKeyword(token: string) {
+  strengthenKeyword(token: string) {
     const currentTokenProps = this.tokens.get(token)
-    this.tokens.keys()
     this.tokens.set(token, { strength: (currentTokenProps?.strength ?? 0) + 1 })
   }
 
+  weakenKeyword(token: string) {
+    const currentTokenProps = this.tokens.get(token)
+    this.tokens.set(token, { strength: (currentTokenProps?.strength ?? 0) - 1 })
+  }
+
   getSimilarity(value: string) {
-    const tokens = [...this.tokens.keys()]
-    let currentValue = 0
-    tokens.forEach((token) => {
-      const similarity = resolveSimilarity(token, value)
-      if (similarity > currentValue) currentValue = similarity
+    const entries = [...this.tokens.entries()]
+    let similarity = 0,
+      strength = 0
+    entries.forEach((entry) => {
+      const [token, tokenProps] = entry
+      const currentSimilarity = resolveSimilarity(token, value)
+      if (currentSimilarity > similarity) {
+        similarity = currentSimilarity
+        strength = tokenProps.strength
+      }
     })
-    return currentValue
+    return similarity * strength
   }
 
   test(token: string) {

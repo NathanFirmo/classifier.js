@@ -5,6 +5,13 @@
 
 :robot: Natural language processing with Javascript
 
+## Instalation
+
+~~~shell
+npm i classifier.js
+yarn add classifier.js
+~~~
+
 ## Example of use
 
 ~~~typescript

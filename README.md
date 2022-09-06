@@ -9,6 +9,7 @@
 
 ~~~shell
 npm i classifier.js
+# or
 yarn add classifier.js
 ~~~
 

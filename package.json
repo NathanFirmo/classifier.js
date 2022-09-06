@@ -24,9 +24,9 @@
   "author": "Nathan Firmo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/NathanFirmo/natural.js/issues"
+    "url": "https://github.com/NathanFirmo/classifier.js/issues"
   },
-  "homepage": "https://github.com/NathanFirmo/natural.js#readme",
+  "homepage": "https://github.com/NathanFirmo/classifier.js#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",

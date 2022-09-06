@@ -1,8 +1,8 @@
 {
   "name": "classifier.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": ":robot: Natural language processing with Javascript",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --declaration"

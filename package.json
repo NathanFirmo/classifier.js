@@ -1,10 +1,9 @@
 {
   "name": "classifier.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": ":robot: Natural language processing with Javascript",
   "main": "index.js",
   "scripts": {
-    "postinstall": "husky install",
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --declaration"
   },

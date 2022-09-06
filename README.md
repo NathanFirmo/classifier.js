@@ -1,4 +1,4 @@
-# Natural.js
+# Classifier.js
 
 ![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)
 ![version](https://img.shields.io/badge/version-1.0.0-blue)
@@ -8,7 +8,7 @@
 ## Example of use
 
 ~~~typescript
-import { Classifier } from 'naturaljs'
+import { Classifier } from 'natural.js'
 
 const classifier = new Classifier({ percentualReturn: true })
 

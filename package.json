@@ -2,7 +2,7 @@
   "name": "classifier.js",
   "version": "1.0.3",
   "description": ":robot: Natural language processing with Javascript",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc --declaration"

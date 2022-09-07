@@ -16,7 +16,7 @@ yarn add classifier.js
 ## Example of use
 
 ~~~typescript
-import { Classifier } from 'natural.js'
+import { Classifier } from 'classifier.js'
 
 const classifier = new Classifier({ percentualReturn: true })
 

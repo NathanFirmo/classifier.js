@@ -1,7 +1,7 @@
 import { resolveSimilarity } from './lib'
 
 interface TokenProps {
-  strength: number
+  relevancy: number
 }
 
 export class TokensList {
@@ -11,14 +11,14 @@ export class TokensList {
     this.category = category
   }
 
-  strengthenKeyword(token: string) {
+  increaseRelevancy(token: string) {
     const currentTokenProps = this.tokens.get(token)
-    this.tokens.set(token, { strength: (currentTokenProps?.strength ?? 0) + 1 })
+    this.tokens.set(token, { relevancy: (currentTokenProps?.relevancy ?? 0) + 1 })
   }
 
-  weakenKeyword(token: string) {
+  decreaseRelevancy(token: string) {
     const currentTokenProps = this.tokens.get(token)
-    this.tokens.set(token, { strength: (currentTokenProps?.strength ?? 0) - 1 })
+    this.tokens.set(token, { relevancy: (currentTokenProps?.relevancy ?? 0) - 1 })
   }
 
   getSimilarity(value: string) {
@@ -30,13 +30,13 @@ export class TokensList {
       const currentSimilarity = resolveSimilarity(token, value)
       if (currentSimilarity > similarity) {
         similarity = currentSimilarity
-        strength = tokenProps.strength
+        strength = tokenProps.relevancy
       }
     })
     return similarity * strength
   }
 
   test(token: string) {
-    return this.tokens.get(token)?.strength ?? this.getSimilarity(token)
+    return this.tokens.get(token)?.relevancy ?? this.getSimilarity(token)
   }
 }

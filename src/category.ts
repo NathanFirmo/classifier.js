@@ -33,7 +33,7 @@ export class Category {
 
   analize(categories: Category[]) {
     this.getWords(this.sentences).forEach((word) => {
-      this.inferedTokens.strengthenKeyword(word)
+      this.inferedTokens.increaseRelevancy(word)
     })
 
     categories
@@ -41,7 +41,7 @@ export class Category {
       .forEach((category) =>
         category
           .getWords(category.sentences)
-          .forEach((word) => this.inferedTokens.weakenKeyword(word))
+          .forEach((word) => this.inferedTokens.decreaseRelevancy(word))
       )
 
     return this

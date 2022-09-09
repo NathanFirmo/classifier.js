@@ -49,13 +49,13 @@ export class Classifier {
     })
     let result: Record<string, string | number> = {}
     result.unknown = this.getUnknownScore(sentence)
-    const sumStrength =
+    const relevancySum =
       Object.values(classification).reduce(sumFunc, 0) + result.unknown
     result.unknown = this.options?.percentualReturn
-      ? toPercent(result.unknown / sumStrength)
-      : result.unknown / sumStrength
-    for (const [name, strength] of Object.entries(classification)) {
-      const value = sumStrength ? strength / sumStrength : 0
+      ? toPercent(result.unknown / relevancySum)
+      : result.unknown / relevancySum
+    for (const [name, relevancy] of Object.entries(classification)) {
+      const value = relevancySum ? relevancy / relevancySum : 0
       result[name] = this.options?.percentualReturn ? toPercent(value) : value
     }
     return result

@@ -1,6 +1,6 @@
 import { resolveSimilarity } from './lib'
 
-interface TokenProps {
+export interface TokenProps {
   relevancy: number
 }
 

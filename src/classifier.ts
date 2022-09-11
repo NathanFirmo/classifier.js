@@ -1,12 +1,18 @@
 import { Category } from './category'
 import { sumFunc, toPercent } from './lib'
+import { writeFile, readFile } from 'fs/promises'
 
 interface ClassifierOptions {
   percentualReturn?: boolean
 }
 
+export interface ClassifierProps {
+  options: ClassifierOptions
+  categories: Record<'name' | 'tokens', any>[]
+}
+
 export class Classifier {
-  categories: Category[] = []
+  private categories: Category[] = []
   options?: ClassifierOptions = {}
 
   constructor(options?: ClassifierOptions) {
@@ -41,37 +47,84 @@ export class Classifier {
 
   classify(sentence: string) {
     let classification: Record<string, number> = {}
+
     this.categories.forEach((category) => {
       classification[category.name] = category.classify(
         sentence,
         this.categories
       )
     })
+
     let result: Record<string, string | number> = {}
-    result.unknown = this.getUnknownScore(sentence)
+    const unknownScore = this.getUnknownScore(sentence)
     const relevancySum =
-      Object.values(classification).reduce(sumFunc, 0) + result.unknown
+      Object.values(classification).reduce(sumFunc, 0) + unknownScore
     result.unknown = this.options?.percentualReturn
-      ? toPercent(result.unknown / relevancySum)
-      : result.unknown / relevancySum
+      ? toPercent(unknownScore / relevancySum)
+      : unknownScore / relevancySum
+
     for (const [name, relevancy] of Object.entries(classification)) {
       const value = relevancySum ? relevancy / relevancySum : 0
       result[name] = this.options?.percentualReturn ? toPercent(value) : value
     }
+
+    this.freeMemory()
     return result
   }
 
-  getTokens() {
-    return this.categories.flatMap((category) =>
-      category.getWords(category.sentences)
-    )
-  }
-
-  getCateforieByName(name: string) {
-    return this.categories.find((category) => category.name === name)
+  private getTokens() {
+    return [
+      ...new Set(
+        this.categories.flatMap((category) =>
+          category.getTokens().map((token) => {
+            const [tokenName] = token
+            return tokenName
+          })
+        )
+      ),
+    ]
   }
 
   resetAcknowledgement() {
     this.categories = []
+  }
+
+  async toJSON(filename: string) {
+    this.analize()
+    const json: ClassifierProps = {
+      options: this.options!,
+      categories: [],
+    }
+    this.categories.forEach((category) =>
+      json.categories.push({
+        name: category.name,
+        tokens: category.getTokens(),
+      })
+    )
+    await writeFile(filename, JSON.stringify(json, null, 2))
+    return json
+  }
+
+  async fromJSON(filePath: string, options?: ClassifierOptions) {
+    const file = await readFile(filePath)
+    const classifierProps = JSON.parse(
+      file.toString()
+    ) as unknown as ClassifierProps
+    this.resetAcknowledgement()
+    this.options = {
+      ...classifierProps.options,
+      ...options,
+    }
+    classifierProps.categories.forEach((category) =>
+      this.categories.push(new Category(category.name, category.tokens))
+    )
+  }
+
+  private freeMemory() {
+    this.categories.forEach((category) => (category.sentences = []))
+  }
+
+  private analize() {
+    this.categories.forEach((category) => category.analize(this.categories))
   }
 }

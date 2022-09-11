@@ -1,25 +1,25 @@
 import { TokensList } from './tokensList'
 const { isArray } = Array
 import { getAbsoluteValue, sumFunc } from './lib'
+import { TokenProps } from './tokensList'
 
 export class Category {
   name: string
   sentences: string[] = []
   inferedTokens: TokensList
+  private isUpdated = true
 
-  constructor(name: string) {
+  constructor(name: string, tokens: [string, TokenProps][] = []) {
     this.name = name
     this.inferedTokens = new TokensList(name)
+    for (const [name, value] of tokens)
+      this.inferedTokens.tokens.set(name, value)
   }
 
   addSentence(sentence: string) {
+    this.isUpdated = false
     const normalizedSentence = this.normalizeData(sentence)
     this.sentences?.push(normalizedSentence)
-    return this
-  }
-
-  removeSentence(sentence: string) {
-    this.sentences = this.sentences?.filter((item) => item !== sentence)
     return this
   }
 
@@ -32,6 +32,7 @@ export class Category {
   }
 
   analize(categories: Category[]) {
+    if(this.isUpdated) return this
     this.getWords(this.sentences).forEach((word) => {
       this.inferedTokens.increaseRelevancy(word)
     })
@@ -44,6 +45,7 @@ export class Category {
           .forEach((word) => this.inferedTokens.decreaseRelevancy(word))
       )
 
+    this.isUpdated = true
     return this
   }
 
@@ -64,5 +66,9 @@ export class Category {
     )
     const score = this.resolveScore(classifiedWords)
     return score > 0 ? score : 0
+  }
+
+  getTokens() {
+    return [...this.inferedTokens.tokens.entries()]
   }
 }

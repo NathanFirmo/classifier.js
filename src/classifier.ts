@@ -70,4 +70,8 @@ export class Classifier {
   getCateforieByName(name: string) {
     return this.categories.find((category) => category.name === name)
   }
+
+  resetAcknowledgement() {
+    this.categories = []
+  }
 }

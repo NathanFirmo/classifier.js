@@ -8,6 +8,7 @@
 ## Table of Contents
 - [Instalation](#Instalation)
 - [Example of use](#Example-of-use)
+- [API](#API)
 
 ## Instalation
 
@@ -39,3 +40,16 @@ classifier.classify('Apple juice is awesome')
 // OUTPUT: { unknown: '20%', animal: '0%', food: '80%' }
 ~~~
 
+## API
+
+### `learn`
+
+Receive data with an array of related categories.
+
+### `classify`
+
+Classify a sentence based on received data. 
+
+### `resetAcknowledgement`
+
+Removes all that was learned.

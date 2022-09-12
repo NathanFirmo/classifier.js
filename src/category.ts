@@ -1,6 +1,6 @@
 import { TokensList } from './tokensList'
 const { isArray } = Array
-import { getAbsoluteValue, sumFunc } from './lib'
+import { getAbsoluteValue, sumFunc, toNormalizedString } from './lib'
 import { TokenProps } from './tokensList'
 
 export class Category {
@@ -24,7 +24,7 @@ export class Category {
   }
 
   private normalizeData(sentence: string) {
-    return sentence.toLowerCase()
+    return toNormalizedString(sentence.toLowerCase())
   }
 
   getWords(input: string[] | string) {

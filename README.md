@@ -1,9 +1,14 @@
+<div align=center>
+
 # classifier.js
 
 ![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)
 ![version](https://img.shields.io/badge/version-1.1.0-blue)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-:robot: Natural language processing with Javascript
+:robot: An library for natural language processing with TypeScript
+
+</div>
 
 ## Table of Contents
 - [Instalation](#Instalation)

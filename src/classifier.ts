@@ -87,7 +87,7 @@ export class Classifier {
     ]
   }
 
-  resetAcknowledgement() {
+  resetKnowledge() {
     this.categories = []
   }
 
@@ -122,7 +122,7 @@ export class Classifier {
     const classifierProps = JSON.parse(
       file.toString()
     ) as unknown as ClassifierProps
-    this.resetAcknowledgement()
+    this.resetKnowledge()
     this.options = {
       ...classifierProps.options,
       ...options,

@@ -12,7 +12,7 @@
 - [API](#API)
   - [learn](#learn)
   - [classify](#classify)
-  - [resetAcknowledgement](#resetAcknowledgement)
+  - [resetKnowledge](#resetKnowledge)
   - [toJSON](#toJSON)
   - [fromJSON](#fromJSON)
  
@@ -81,11 +81,11 @@ Classify a sentence based on received data.
 classifier.classify('Sentence to classify')
 ~~~
 
-### `resetAcknowledgement`
+### `resetKnowledge`
 
 Removes all that was learned.
 ~~~typescript
-classifier.resetAcknowledgement()
+classifier.resetKnowledge()
 ~~~
 
 ### `toJSON`

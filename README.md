@@ -8,8 +8,14 @@
 ## Table of Contents
 - [Instalation](#Instalation)
 - [Example of use](#Example-of-use)
+  - [Auto detection of numeric strings shape](#Auto-detection-of-numeric-strings-shape)
 - [API](#API)
-
+  - [learn](#learn)
+  - [classify](#classify)
+  - [resetAcknowledgement](#resetAcknowledgement)
+  - [toJSON](#toJSON)
+  - [fromJSON](#fromJSON)
+ 
 ## Instalation
 
 ~~~shell
@@ -40,16 +46,64 @@ classifier.classify('Apple juice is awesome')
 // OUTPUT: { unknown: '20%', animal: '0%', food: '80%' }
 ~~~
 
+### Auto detection of numeric strings shape
+
+~~~typescript
+import { Classifier } from 'classifier.js'
+
+const classifier = new Classifier({ percentualReturn: true })
+
+classifier.learn('000.000.000-11', ['cpf'])
+classifier.learn('00.000.000/0001-00', ['cnpj'])
+classifier.learn('00155-333', ['zipcode'])
+
+classifier.classify('999.999.999-99')
+// OUTPUT: { unknown: '0%', cpf: '100%', cnpj: '0%', zipcode: '0%' }
+classifier.classify('99.999.999/9999-99')
+// OUTPUT: { unknown: '0%', cpf: '0%', cnpj: '100%', zipcode: '0%' }
+classifier.classify('99999-999')
+// OUTPUT: { unknown: '0%', cpf: '0%', cnpj: '0%', zipcode: '100%' }
+~~~
+
 ## API
 
 ### `learn`
 
 Receive data with an array of related categories.
+~~~typescript
+classifier.learn('Your sentence', ['your-category'])
+~~~
 
 ### `classify`
 
 Classify a sentence based on received data. 
+~~~typescript
+classifier.classify('Sentence to classify')
+~~~
 
 ### `resetAcknowledgement`
 
 Removes all that was learned.
+~~~typescript
+classifier.resetAcknowledgement()
+~~~
+
+### `toJSON`
+
+Saves classifier data to a JSON file that can be imported later.
+~~~typescript
+classifier.toJSON('myFolder/savedClassifier.json')
+# Or simply
+classifier.toJSON('savedClassifier.json')
+~~~
+
+### `fromJSON`
+
+Imports data from a JSON file.
+~~~typescript
+classifier.fromJSON('myFolder/savedClassifier.json')
+# Or simply
+classifier.fromJSON('savedClassifier.json')
+~~~
+
+

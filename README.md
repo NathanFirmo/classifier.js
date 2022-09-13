@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-1.1.0-blue)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-:robot: An library for natural language processing with TypeScript
+:robot: An library for natural language processing with JavaScript
 
 <img src="https://user-images.githubusercontent.com/79997705/189793574-ee73d2eb-2574-43f0-b464-541049d3a40d.png" width="550px" heigth="550px">
 

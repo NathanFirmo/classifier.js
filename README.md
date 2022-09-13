@@ -8,6 +8,8 @@
 
 :robot: An library for natural language processing with TypeScript
 
+<img src="https://user-images.githubusercontent.com/79997705/189793574-ee73d2eb-2574-43f0-b464-541049d3a40d.png" width="550px" heigth="550px">
+
 </div>
 
 ## Table of Contents

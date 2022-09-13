@@ -1,6 +1,8 @@
 import { Category } from './category'
 import { sumFunc, toPercent } from './lib'
-import { writeFile, readFile } from 'fs/promises'
+import { writeFile, readFile, mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
+import { parse } from 'path'
 
 interface ClassifierOptions {
   percentualReturn?: boolean
@@ -89,7 +91,17 @@ export class Classifier {
     this.categories = []
   }
 
-  async toJSON(filename: string) {
+  private async ensureAttributesForCreation(filepath: string) {
+    const { ext, dir } = parse(filepath)
+    if (ext !== '.json')
+      throw new Error(`'${filepath}' is an invalid filepath! The file must be a JSON.`)
+    if (!existsSync(dir)) {
+      await mkdir(dir, { recursive: true })
+    }
+  }
+
+  async toJSON(filepath: string) {
+    await this.ensureAttributesForCreation(filepath)
     this.analize()
     const json: ClassifierProps = {
       options: this.options!,
@@ -101,7 +113,7 @@ export class Classifier {
         tokens: category.getTokens(),
       })
     )
-    await writeFile(filename, JSON.stringify(json, null, 2))
+    await writeFile(filepath, JSON.stringify(json, null, 2))
     return json
   }
 

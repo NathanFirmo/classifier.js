@@ -5,6 +5,7 @@
 ![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)
 ![version](https://img.shields.io/github/package-json/v/NathanFirmo/classifier.js)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+[![CD](https://github.com/NathanFirmo/classifier.js/actions/workflows/cd.yml/badge.svg)](https://github.com/NathanFirmo/classifier.js/actions/workflows/cd.yml)
 
 :robot: An library for natural language processing with JavaScript
 

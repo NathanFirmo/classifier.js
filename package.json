@@ -5,7 +5,15 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "build": "tsc --declaration"
+    "build": "tsc --declaration",
+    "publish:patch": "npm run version:patch && npm run push:tags && npm run publish",
+    "publish:minor": "npm run version:minor && npm run push:tags && npm run publish",
+    "publish:major": "npm run version:major && npm run push:tags && npm run publish",
+    "version:patch": "npm version patch -m 'chore: release version %s'",
+    "version:minor": "npm version minor -m 'chore: release version %s'",
+    "version:major": "npm version major -m 'chore: release version %s'",
+    "publish": "npm run build && npm publish",
+    "push:tags": "git push origin --tags"
   },
   "repository": {
     "type": "git",

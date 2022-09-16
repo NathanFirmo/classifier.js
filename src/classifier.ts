@@ -95,7 +95,7 @@ export class Classifier {
     const { ext, dir } = parse(filepath)
     if (ext !== '.json')
       throw new Error(`'${filepath}' is an invalid filepath! The file must be a JSON.`)
-    if (!existsSync(dir)) {
+    if (dir && !existsSync(dir)) {
       await mkdir(dir, { recursive: true })
     }
   }

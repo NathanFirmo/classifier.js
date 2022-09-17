@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jest",
     "build": "tsc --declaration",
-    "release:patch": "npm version patch -m 'chore: release version %s' && git push",
-    "release:minor": "npm version minor -m 'chore: release version %s' && git push",
-    "release:major": "npm version major -m 'chore: release version %s' && git push",
+    "release:patch": "HUSKY=0 npm version patch -m 'chore: release version %s' && git push",
+    "release:minor": "HUSKY=0 npm version minor -m 'chore: release version %s' && git push",
+    "release:major": "HUSKY=0 npm version major -m 'chore: release version %s' && git push",
     "prepare": "husky install"
   },
   "repository": {

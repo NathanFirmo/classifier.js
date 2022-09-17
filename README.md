@@ -114,4 +114,22 @@ classifier.fromJSON('myFolder/savedClassifier.json')
 classifier.fromJSON('savedClassifier.json')
 ~~~
 
+### `toYAML`
+
+Saves classifier data to an YAML file that can be imported later.
+~~~typescript
+classifier.toJSON('myFolder/savedClassifier.json')
+# Or simply
+classifier.toJSON('savedClassifier.json')
+~~~
+
+### `fromYAML`
+
+Imports data from an YAML file.
+~~~typescript
+classifier.fromJSON('myFolder/savedClassifier.yaml')
+# Or simply
+classifier.fromJSON('savedClassifier.yaml')
+~~~
+
 

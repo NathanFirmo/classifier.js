@@ -3,6 +3,7 @@ import { sumFunc, toPercent } from './lib'
 import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { parse } from 'path'
+import yaml from 'js-yaml'
 
 interface ClassifierOptions {
   percentualReturn?: boolean
@@ -91,17 +92,24 @@ export class Classifier {
     this.categories = []
   }
 
-  private async ensureAttributesForCreation(filepath: string) {
+  private async ensureAttributesForCreation(
+    filepath: string,
+    format: 'JSON' | 'YAML',
+    allowedExtentions: string[]
+  ) {
     const { ext, dir } = parse(filepath)
-    if (ext !== '.json')
-      throw new Error(`'${filepath}' is an invalid filepath! The file must be a JSON.`)
+    if (!allowedExtentions.includes(ext))
+      throw new Error(
+        `'${filepath}' is an invalid filepath! The file must be a valid ${format}.`
+      )
+
     if (dir && !existsSync(dir)) {
       await mkdir(dir, { recursive: true })
     }
   }
 
   async toJSON(filepath: string) {
-    await this.ensureAttributesForCreation(filepath)
+    await this.ensureAttributesForCreation(filepath, 'JSON', ['.json'])
     this.analize()
     const json: ClassifierProps = {
       options: this.options!,
@@ -114,7 +122,37 @@ export class Classifier {
       })
     )
     await writeFile(filepath, JSON.stringify(json, null, 2))
-    return json
+  }
+
+  async toYAML(filepath: string) {
+    await this.ensureAttributesForCreation(filepath, 'YAML', ['.yml', '.yaml'])
+    this.analize()
+    const json: ClassifierProps = {
+      options: this.options!,
+      categories: [],
+    }
+    this.categories.forEach((category) =>
+      json.categories.push({
+        name: category.name,
+        tokens: category.getTokens(),
+      })
+    )
+    await writeFile(filepath, yaml.dump(json))
+  }
+
+  async fromYAML(filePath: string, options?: ClassifierOptions) {
+    const file = await readFile(filePath)
+    const classifierProps = yaml.load(
+      file.toString()
+    ) as unknown as ClassifierProps
+    this.resetKnowledge()
+    this.options = {
+      ...classifierProps.options,
+      ...options,
+    }
+    classifierProps.categories.forEach((category) =>
+      this.categories.push(new Category(category.name, category.tokens))
+    )
   }
 
   async fromJSON(filePath: string, options?: ClassifierOptions) {

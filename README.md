@@ -118,9 +118,9 @@ classifier.fromJSON('savedClassifier.json')
 
 Saves classifier data to an YAML file that can be imported later.
 ~~~typescript
-classifier.toJSON('myFolder/savedClassifier.json')
+classifier.toJSON('myFolder/savedClassifier.yaml')
 # Or simply
-classifier.toJSON('savedClassifier.json')
+classifier.toJSON('savedClassifier.yaml')
 ~~~
 
 ### `fromYAML`

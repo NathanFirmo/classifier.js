@@ -23,6 +23,8 @@
   - [resetKnowledge](#resetKnowledge)
   - [toJSON](#toJSON)
   - [fromJSON](#fromJSON)
+  - [toYAML](#toYAML)
+  - [fromYAML](#fromYAML)
  
 ## Instalation
 

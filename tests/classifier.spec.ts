@@ -16,9 +16,10 @@ describe('Classifier', () => {
   })
 
   afterAll(async () => {
-    await fs.promises.rm('test.json')
-    await fs.promises.rm('test.yaml')
-    await fs.promises.rm('nested-dir', { recursive: true })
+    if (fs.existsSync('test.json')) await fs.promises.rm('test.json')
+    if (fs.existsSync('test.yaml')) await fs.promises.rm('test.yaml')
+    if (fs.existsSync('nested-dir'))
+      await fs.promises.rm('nested-dir', { recursive: true })
   })
 
   describe('file system saving methods', () => {
@@ -62,6 +63,50 @@ describe('Classifier', () => {
     it('load data from an yaml file in a nested directory', async () => {
       await classifier.fromYAML('nested-dir/test.yaml')
       expect(classifier.classify("They don't eat rice")).toEqual(fromFileOutput)
+    })
+  })
+
+  describe('classifying method', () => {
+    it('should be able to classify sentences with only one category', () => {
+      classifier.resetKnowledge()
+      classifier.learn('I like cats', ['animal'])
+      classifier.learn('Cats are cool', ['animal'])
+      classifier.learn('Dogs are noisy', ['animal'])
+      classifier.learn('I love animals', ['animal'])
+      classifier.learn('I like my horse', ['animal'])
+      classifier.learn('Chocolate is good', ['food'])
+      classifier.learn('I eat apple', ['food'])
+      classifier.learn('Juice is very good', ['food'])
+      classifier.learn('Brazilians eat rice and beans', ['food'])
+      classifier.learn('Bananas are good for health', ['food'])
+
+      expect(classifier.classify('Apple juice is awesome')).toEqual(
+        expect.objectContaining({ unknown: 0.2, animal: 0, food: 0.8 })
+      )
+    })
+
+    it('should be able to classify sentences with more than one category', () => {
+      classifier.resetKnowledge()
+      classifier.learn('I like cats', ['animal'])
+      classifier.learn('Cats are cool', ['animal'])
+      classifier.learn('Dogs are noisy', ['animal'])
+      classifier.learn('I love animals', ['animal'])
+      classifier.learn('I like my horse', ['animal', 'herbivorous'])
+      classifier.learn('Chocolate is good', ['food'])
+      classifier.learn('I eat apple', ['food', 'fruit'])
+      classifier.learn('Juice is very good', ['food'])
+      classifier.learn('Brazilians eat rice and beans', ['food'])
+      classifier.learn('Bananas are good for health', ['food'])
+
+      expect(classifier.classify('Apple juice is awesome')).toEqual(
+        expect.objectContaining({
+          unknown: 0.12727272727272726,
+          animal: 0,
+          herbivorous: 0,
+          food: 0.509090909090909,
+          fruit: 0.36363636363636365,
+        })
+      )
     })
   })
 })

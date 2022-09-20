@@ -27,9 +27,10 @@ export class Classifier {
       let categorie = this.categories.find(
         (categorie) => categorie.name === classification
       )
-      if (categorie) categorie.addSentence(sentence)
+      const relatedCategories = classifications.filter(item => item !== classification)
+      if (categorie) categorie.addSentence(sentence, relatedCategories)
       else {
-        categorie = new Category(classification).addSentence(sentence)
+        categorie = new Category(classification).addSentence(sentence, relatedCategories)
         this.categories.push(categorie)
       }
     })
@@ -63,8 +64,8 @@ export class Classifier {
     const relevancySum =
       Object.values(classification).reduce(sumFunc, 0) + unknownScore
     result.unknown = this.options?.percentualReturn
-      ? toPercent(unknownScore / relevancySum)
-      : unknownScore / relevancySum
+      ? toPercent(!!relevancySum ? unknownScore / relevancySum : unknownScore)
+      : !!relevancySum ? unknownScore / relevancySum : unknownScore
 
     for (const [name, relevancy] of Object.entries(classification)) {
       const value = relevancySum ? relevancy / relevancySum : 0

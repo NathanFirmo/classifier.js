@@ -5,6 +5,7 @@ import { TokenProps } from './tokensList'
 
 export class Category {
   name: string
+  relatedCategories = new Set<string>()
   sentences: string[] = []
   inferedTokens: TokensList
   private isUpdated = true
@@ -16,10 +17,11 @@ export class Category {
       this.inferedTokens.tokens.set(name, value)
   }
 
-  addSentence(sentence: string) {
+  addSentence(sentence: string, relatedCategories: string[]) {
     this.isUpdated = false
     const normalizedSentence = this.normalizeData(sentence)
     this.sentences?.push(normalizedSentence)
+    relatedCategories.forEach(category => this.relatedCategories.add(category))
     return this
   }
 
@@ -31,6 +33,10 @@ export class Category {
     return isArray(input) ? input.join(' ').split(' ') : input.split(' ')
   }
 
+  private isARelatedCategory(category: string) {
+    return this.relatedCategories.has(category)
+  }
+
   analize(categories: Category[]) {
     if(this.isUpdated) return this
     this.getWords(this.sentences).forEach((word) => {
@@ -38,7 +44,7 @@ export class Category {
     })
 
     categories
-      .filter((category) => category.name !== this.name)
+      .filter((category) => category.name !== this.name && !this.isARelatedCategory(category.name))
       .forEach((category) =>
         category
           .getWords(category.sentences)

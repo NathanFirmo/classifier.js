@@ -108,5 +108,23 @@ describe('Classifier', () => {
         })
       )
     })
+
+    it('should be able to accept string as category to classify sentences', () => {
+      classifier.resetKnowledge()
+      classifier.learn('I like cats', 'animal')
+      classifier.learn('Cats are cool', 'animal')
+      classifier.learn('Dogs are noisy', 'animal')
+      classifier.learn('I love animals', 'animal')
+      classifier.learn('I like my horse', 'animal')
+      classifier.learn('Chocolate is good', 'food')
+      classifier.learn('I eat apple', 'food')
+      classifier.learn('Juice is very good', 'food')
+      classifier.learn('Brazilians eat rice and beans', 'food')
+      classifier.learn('Bananas are good for health', 'food')
+
+      expect(classifier.classify('Apple juice is awesome')).toEqual(
+        expect.objectContaining({ unknown: 0.2, animal: 0, food: 0.8 })
+      )
+    })
   })
 })

@@ -22,15 +22,24 @@ export class Classifier {
     this.options = options
   }
 
-  learn(sentence: string, classifications: string[]) {
+  learn(sentence: string, inputs: string | string[]) {
+    const classifications = Array.isArray(inputs)
+      ? inputs
+      : [inputs]
+
     classifications.forEach((classification) => {
       let categorie = this.categories.find(
         (categorie) => categorie.name === classification
       )
-      const relatedCategories = classifications.filter(item => item !== classification)
+      const relatedCategories = classifications.filter(
+        (item) => item !== classification
+      )
       if (categorie) categorie.addSentence(sentence, relatedCategories)
       else {
-        categorie = new Category(classification).addSentence(sentence, relatedCategories)
+        categorie = new Category(classification).addSentence(
+          sentence,
+          relatedCategories
+        )
         this.categories.push(categorie)
       }
     })
@@ -65,7 +74,9 @@ export class Classifier {
       Object.values(classification).reduce(sumFunc, 0) + unknownScore
     result.unknown = this.options?.percentualReturn
       ? toPercent(!!relevancySum ? unknownScore / relevancySum : unknownScore)
-      : !!relevancySum ? unknownScore / relevancySum : unknownScore
+      : !!relevancySum
+      ? unknownScore / relevancySum
+      : unknownScore
 
     for (const [name, relevancy] of Object.entries(classification)) {
       const value = relevancySum ? relevancy / relevancySum : 0

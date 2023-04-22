@@ -28,19 +28,19 @@ export class Classifier {
       : [inputs]
 
     classifications.forEach((classification) => {
-      let categorie = this.categories.find(
+      let category = this.categories.find(
         (categorie) => categorie.name === classification
       )
       const relatedCategories = classifications.filter(
         (item) => item !== classification
       )
-      if (categorie) categorie.addSentence(sentence, relatedCategories)
+      if (category) category.addSentence(sentence, relatedCategories)
       else {
-        categorie = new Category(classification).addSentence(
+        category = new Category(classification).addSentence(
           sentence,
           relatedCategories
         )
-        this.categories.push(categorie)
+        this.categories.push(category)
       }
     })
   }

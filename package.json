@@ -1,6 +1,6 @@
 {
   "name": "classifier.js",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "description": ":robot: Natural language processing with Javascript",
   "main": "dist/src/index.js",
   "scripts": {

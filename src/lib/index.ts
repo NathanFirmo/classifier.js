@@ -1,3 +1,4 @@
-export * from './parser'
-export * from './similarity'
 export * from './math'
+export * from './parser'
+export * from './utils'
+export * from './similarity'

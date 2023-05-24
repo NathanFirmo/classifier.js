@@ -1,31 +1,53 @@
 import { Category } from './category'
-import { sumFunc, toPercent } from './lib'
+import { isArray, returnTypeParser, sumFunc, toNumber, toPercent } from './lib'
 import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { parse } from 'path'
 import yaml from 'js-yaml'
-
-interface ClassifierOptions {
-  percentualReturn?: boolean
-}
-
-export interface ClassifierProps {
-  options: ClassifierOptions
-  categories: Record<'name' | 'tokens', any>[]
-}
+import { ClassifierProps, ClassifierOptions, Dataset } from './types'
 
 export class Classifier {
   private categories: Category[] = []
-  options?: ClassifierOptions = {}
+  options: ClassifierOptions = {}
 
   constructor(options?: ClassifierOptions) {
-    this.options = options
+    this.options = options ?? {}
+  }
+
+  calculateAccuracy(
+    trainData: Dataset,
+    validationData: Dataset
+  ): string | number {
+    const validationSentencesQuantity = validationData.length
+    let correctInferences = 0
+
+    for (const { sentence, categories } of trainData) {
+      this.learn(sentence, categories)
+    }
+
+    for (const { sentence, categories } of validationData) {
+      const classification = this.classify(sentence)
+      const match = (this.options.returnType === 'BEST_MATCH'
+        ? classification
+        : this.extractBestMatch(
+            classification as unknown as Record<string, number>
+          )) as unknown as string
+
+      const categoriesToCheck = isArray(categories)
+        ? categories
+        : ([categories] as unknown as string[])
+
+      if (categoriesToCheck.includes(match)) correctInferences++
+    }
+
+    return returnTypeParser(
+      correctInferences / validationSentencesQuantity,
+      this.options
+    )
   }
 
   learn(sentence: string, inputs: string | string[]) {
-    const classifications = Array.isArray(inputs)
-      ? inputs
-      : [inputs]
+    const classifications = Array.isArray(inputs) ? inputs : [inputs]
 
     classifications.forEach((classification) => {
       let category = this.categories.find(
@@ -72,19 +94,35 @@ export class Classifier {
     const unknownScore = this.getUnknownScore(sentence)
     const relevancySum =
       Object.values(classification).reduce(sumFunc, 0) + unknownScore
-    result.unknown = this.options?.percentualReturn
-      ? toPercent(!!relevancySum ? unknownScore / relevancySum : unknownScore)
-      : !!relevancySum
-      ? unknownScore / relevancySum
-      : unknownScore
+
+    result.unknown =
+      this.options?.returnType === 'PERCENTAGE'
+        ? toPercent(!!relevancySum ? unknownScore / relevancySum : unknownScore)
+        : !!relevancySum
+        ? unknownScore / relevancySum
+        : unknownScore
 
     for (const [name, relevancy] of Object.entries(classification)) {
       const value = relevancySum ? relevancy / relevancySum : 0
-      result[name] = this.options?.percentualReturn ? toPercent(value) : value
+      result[name] = returnTypeParser(value ?? 0, this.options)
     }
 
     this.freeMemory()
+
+    if (this.options.returnType === 'BEST_MATCH') {
+      return this.extractBestMatch(result as unknown as Record<string, number>)
+    }
+
     return result
+  }
+
+  private extractBestMatch(result: Record<string, number>) {
+    const descendingSortedResult = Object.entries(result).sort(
+      (a, b) => toNumber(b[1]) - toNumber(a[1])
+    )
+    const [[bestMatch]] = descendingSortedResult
+
+    return bestMatch
   }
 
   private getTokens() {
@@ -120,36 +158,31 @@ export class Classifier {
     }
   }
 
-  async toJSON(filepath: string) {
-    await this.ensureAttributesForCreation(filepath, 'JSON', ['.json'])
+  getModel() {
     this.analize()
     const json: ClassifierProps = {
       options: this.options!,
       categories: [],
     }
+
     this.categories.forEach((category) =>
       json.categories.push({
         name: category.name,
         tokens: category.getTokens(),
       })
     )
-    await writeFile(filepath, JSON.stringify(json, null, 2))
+
+    return json
   }
 
   async toYAML(filepath: string) {
     await this.ensureAttributesForCreation(filepath, 'YAML', ['.yml', '.yaml'])
-    this.analize()
-    const json: ClassifierProps = {
-      options: this.options!,
-      categories: [],
-    }
-    this.categories.forEach((category) =>
-      json.categories.push({
-        name: category.name,
-        tokens: category.getTokens(),
-      })
-    )
-    await writeFile(filepath, yaml.dump(json))
+    await writeFile(filepath, yaml.dump(this.getModel()))
+  }
+
+  async toJSON(filepath: string) {
+    await this.ensureAttributesForCreation(filepath, 'JSON', ['.json'])
+    await writeFile(filepath, JSON.stringify(this.getModel(), null, 2))
   }
 
   async fromYAML(filePath: string, options?: ClassifierOptions) {

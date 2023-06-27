@@ -39,7 +39,7 @@ yarn add classifier.js
 ~~~typescript
 import { Classifier } from 'classifier.js'
 
-const classifier = new Classifier({ percentualReturn: true })
+const classifier = new Classifier({ returnType: 'PERCENTAGE' })
 
 classifier.learn('I like cats', ['animal'])
 classifier.learn('Cats are cool', ['animal'])

@@ -129,9 +129,9 @@ classifier.toYAML('savedClassifier.yaml')
 
 Imports data from an YAML file.
 ~~~typescript
-classifier.toYAML('myFolder/savedClassifier.yaml')
+classifier.fromYAML('myFolder/savedClassifier.yaml')
 # Or simply
-classifier.toYAML('savedClassifier.yaml')
+classifier.fromYAML('savedClassifier.yaml')
 ~~~
 
 
